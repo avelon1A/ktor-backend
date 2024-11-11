@@ -43,5 +43,12 @@ application {
     mainClass.set("MainKt")
 }
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(17)
+}
+task("buildAndRun") {
+    dependsOn("build") // First, build the project
+    doLast {
+
+
+    }
 }
