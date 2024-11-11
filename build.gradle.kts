@@ -42,6 +42,11 @@ tasks.test {
 application {
     mainClass.set("MainKt")
 }
+tasks.jar {
+    archiveBaseName.set("codingbackend")  // Set the base name of the JAR file
+    archiveVersion.set("1.0.0")            // Set a version if needed
+}
+
 kotlin {
     jvmToolchain(17)
 }
