@@ -20,7 +20,7 @@ RUN chmod +x gradlew
 RUN ./gradlew build
 
 # Copy the generated JAR file into the container
-COPY build/libs/testcoverage.jar /app/testcoverage.jar
+COPY build/libs/testcoverage-all.jar /app/testcoverage-all.jar
 
 # Expose the port that the Ktor app will be running on
 EXPOSE 8080
