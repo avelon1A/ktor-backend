@@ -1,10 +1,10 @@
-name: Build Docker Image and Deploy API
+name: Build Docker Image and Deploy Ktor App
 
 on:
   push:
     branches:
       - master  # Trigger on push to master for Docker build
-      - main    # Trigger on push to main for Spring API deployment
+      - main    # Trigger on push to main for Ktor app deployment
   pull_request:
     branches:
       - master
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up JDK 17 for the Gradle build
+      # Step 2: Set up JDK 17 for the Gradle build (Ktor app)
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
@@ -60,10 +60,10 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # Step 8: Build the Docker image
+      # Step 8: Build the Docker image for Ktor app
       - name: Build Docker image
         run: |
-          echo "Building Docker image..."
+          echo "Building Docker image for Ktor app..."
           docker build -t testcoverage:latest .
           docker images
 
@@ -81,54 +81,24 @@ jobs:
           docker tag testcoverage:latest ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
 
-  # Job 2: Build and Deploy Spring API
-  build-deploy:
-    runs-on: ubuntu-20.04
-    needs: build  # Make sure the Docker image build job is completed first
+  # Job 2: Deploy Ktor App (optional step if needed for deployment)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # Ensure build job is successful before deployment
 
     steps:
-      # Step 1: Checkout the code
+      # Step 1: Checkout the code again for deployment
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Set up JDK 17 for the Maven build
-      - name: Setup JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'corretto'
-          java-version: 17
-
-      # Step 3: Run unit tests with Maven
-      - name: Run unit tests
-        run: mvn -B test --file pom.xml
-
-      # Step 4: Build the Spring application using Maven
-      - name: Build the Spring app
+      # Step 2: Pull Docker image from Docker Hub
+      - name: Pull Docker image from Docker Hub
         run: |
-          mvn clean
-          mvn -B package --file pom.xml
+          echo "Pulling Docker image from Docker Hub..."
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
 
-      # Step 5: Build the Docker image for the Spring API
-      - name: Build Docker image for Spring API
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          dockerfile: Dockerfile
-          push: false  # Don't push yet
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rest-api:latest
-
-      # Step 6: Log in to Docker Hub
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
-      # Step 7: Push the Docker image for the Spring API to Docker Hub
-      - name: Push Docker image to Docker Hub
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          dockerfile: Dockerfile
-          push: true  # Push the image to Docker Hub
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/rest-api:latest
+      # Step 3: Deploy Docker container (example: run the container on a cloud service or server)
+      - name: Run Docker container (deployment)
+        run: |
+          echo "Running Docker container for Ktor app..."
+          docker run -d -p 8080:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
