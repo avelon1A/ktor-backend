@@ -14,7 +14,6 @@ COPY settings.gradle.kts /app
 COPY src /app/src
 
 # Make the Gradle wrapper executable
-RUN chmod +x gradlew
 
 # Build the application
 RUN ./gradlew build
