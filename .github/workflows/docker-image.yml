@@ -1,40 +1,48 @@
-name: Build Docker Image and Retrieve Artifact
+name: Build and Verify JAR File
 
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
 
-    - name: Build Docker image
-      run: |
-        echo "Building Docker image..."
-        docker build -t testcoverage:latest .
-        docker images
+      - name: Set up Gradle Cache
+        uses: gradle/action-build-cache@v2
+        with:
+          cache-version: 1
 
-    - name: Copy JAR artifact
-      run: |
-        echo "Checking if JAR file exists..."
-        mkdir -p $GITHUB_WORKSPACE/artifacts
-        ls build/libs  # Check that the build/libs folder contains the JAR
-        cp build/libs/testcoverage.jar $GITHUB_WORKSPACE/artifacts/
-        ls $GITHUB_WORKSPACE/artifacts  # List the files in the artifact folder
+      - name: Build the project using Gradle
+        run: |
+          ./gradlew build --no-daemon
 
-    - name: Upload artifact (JAR file)
-      uses: actions/upload-artifact@v3
-      with:
-        name: testcoverage-jar
-        path: $GITHUB_WORKSPACE/artifacts/testcoverage.jar
+      - name: Verify if JAR file exists
+        run: |
+          echo "Checking if the JAR file exists..."
+          if [ -f "build/libs/testcoverage-all.jar" ]; then
+            echo "JAR file found: build/libs/testcoverage-all.jar"
+          else
+            echo "JAR file not found!"
+            exit 1
+          fi
+
+      - name: Upload JAR as artifact
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: testcoverage-jar
+          path: build/libs/testcoverage-all.jar
