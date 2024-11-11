@@ -9,15 +9,16 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
+import model.data.StatusResponse
 import service.MainService
 
 fun main() {
-    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 40666, host = "192.168.3.63", module = Application::module).start(wait = true)
 }
 
 fun Application.module() {
     install(ContentNegotiation) {
-        json(Json { prettyPrint = true; isLenient = true })
+        json(Json { prettyPrint = true})
     }
 
     install(StatusPages) {
@@ -34,7 +35,8 @@ fun Application.module() {
 fun Route.coverageRouting(mainService: MainService) {
 
     get("/") {
-        call.respond(HttpStatusCode.OK, "wellcome")
+        val response = StatusResponse(status = "ok", method = "GET")
+        call.respond(HttpStatusCode.OK, response)
     }
 
 
@@ -42,5 +44,14 @@ fun Route.coverageRouting(mainService: MainService) {
         val categories = mainService.getCategories()
         call.respond(HttpStatusCode.OK, categories)
     }
+    post("/runjava") {
+        val javaCode = call.receiveText()
+
+        val result = runJavaCode(javaCode)
+
+        call.respond(HttpStatusCode.OK, result)
+    }
 }
+
+
 
