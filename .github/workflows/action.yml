@@ -22,7 +22,7 @@ jobs:
       - name: Build Docker image
         run: |
           echo "Building Docker image..."
-          docker build -t codingbackend:latest .
+          docker build -t testcoverage:latest .
           docker images
 
       - name: Copy JAR artifact
@@ -30,11 +30,11 @@ jobs:
           echo "Checking if JAR file exists..."
           mkdir -p $GITHUB_WORKSPACE/artifacts
           ls build/libs  # Check that the build/libs folder contains the JAR
-          cp build/libs/codingbackend.jar $GITHUB_WORKSPACE/artifacts/
+          cp build/libs/testcoverage.jar $GITHUB_WORKSPACE/artifacts/
           ls $GITHUB_WORKSPACE/artifacts  # List the files in the artifact folder
 
       - name: Upload artifact (JAR file)
         uses: actions/upload-artifact@v3
         with:
-          name: codingbackend-jar
-          path: $GITHUB_WORKSPACE/artifacts/codingbackend.jar
+          name: testcoverage-jar
+          path: $GITHUB_WORKSPACE/artifacts/testcoverage.jar

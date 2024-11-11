@@ -42,17 +42,7 @@ tasks.test {
 application {
     mainClass.set("MainKt")
 }
-tasks.jar {
-    archiveBaseName.set("codingbackend")  // Set the base name of the JAR file
-}
 
 kotlin {
     jvmToolchain(17)
-}
-task("buildAndRun") {
-    dependsOn("build") // First, build the project
-    doLast {
-
-
-    }
 }

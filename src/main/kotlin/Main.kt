@@ -13,7 +13,7 @@ import model.data.StatusResponse
 import service.MainService
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "192.168.3.63", module = Application::module).start(wait = true)
+    embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
 }
 
 fun Application.module() {

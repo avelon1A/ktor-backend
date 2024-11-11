@@ -20,10 +20,10 @@ RUN chmod +x gradlew
 RUN ./gradlew build
 
 # Copy the generated JAR file into the container
-COPY build/libs/codingbackend.jar /app/codingbackend.jar
+COPY build/libs/testcoverage.jar /app/testcoverage.jar
 
 # Expose the port that the Ktor app will be running on
 EXPOSE 8080
 
 # Command to run the application
-CMD ["java", "-jar", "/app/codingbackend.jar"]
+CMD ["java", "-jar", "/app/testcoverage.jar"]
