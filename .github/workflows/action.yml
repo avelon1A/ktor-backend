@@ -1,0 +1,41 @@
+name: Build Docker Image and Retrieve Artifact
+
+# Trigger the workflow on push to main branch or on pull request to main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Use an Ubuntu runner (can be any OS you prefer)
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker Buildx for multi-platform builds (optional, but good practice)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t testcoverage:latest .
+
+      # Extract the JAR file after building (this assumes your Dockerfile generates the JAR in /app/build/libs/)
+      - name: Copy JAR artifact
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/artifacts
+          cp build/libs/testcoverage.jar $GITHUB_WORKSPACE/artifacts/
+
+      # Upload the JAR file as a GitHub artifact (to retrieve later)
+      - name: Upload artifact (JAR file)
+        uses: actions/upload-artifact@v3
+        with:
+          name: testcoverage-jar
+          path: $GITHUB_WORKSPACE/artifacts/testcoverage.jar
