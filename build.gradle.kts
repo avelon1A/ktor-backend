@@ -46,3 +46,6 @@ application {
 kotlin {
     jvmToolchain(17)
 }
+tasks.jar {
+    archiveBaseName.set("testcoverage")
+}
