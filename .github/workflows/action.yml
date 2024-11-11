@@ -22,7 +22,7 @@ jobs:
       - name: Build Docker image
         run: |
           echo "Building Docker image..."
-          docker build -t testcoverage:latest .
+          docker build -t codingbackend:latest .
           docker images
 
       - name: Copy JAR artifact
@@ -37,4 +37,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: testcoverage-jar
-          path: $GITHUB_WORKSPACE/artifacts/testcoverage.jar
+          path: $GITHUB_WORKSPACE/artifacts/codingbackend.jar
