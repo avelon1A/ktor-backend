@@ -1,3 +1,5 @@
+import org.gradle.internal.declarativedsl.parsing.main
+
 plugins {
     kotlin("jvm") version "2.0.20"
     id("io.ktor.plugin") version "2.3.5"
@@ -37,6 +39,9 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+application {
+    mainClass.set("MainKt")
+}
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 }
