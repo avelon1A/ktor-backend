@@ -9,6 +9,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.json.Json
+import model.data.DataList
 import model.data.StatusResponse
 import service.MainService
 
@@ -18,7 +19,8 @@ fun main() {
 
 fun Application.module() {
     install(ContentNegotiation) {
-        json(Json { prettyPrint = true})
+        json(Json { prettyPrint = true; isLenient = true })
+
     }
 
     install(StatusPages) {
@@ -35,14 +37,15 @@ fun Application.module() {
 fun Route.coverageRouting(mainService: MainService) {
 
     get("/") {
-        val response = StatusResponse(status = "ok", method = "GET")
+        val response = StatusResponse(text = "hello world")
         call.respond(HttpStatusCode.OK, response)
     }
 
 
     get("/categories") {
         val categories = mainService.getCategories()
-        call.respond(HttpStatusCode.OK, categories)
+        val dataResult = DataList(categories,3)
+        call.respond(dataResult)
     }
     post("/runjava") {
         val javaCode = call.receiveText()

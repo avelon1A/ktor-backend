@@ -34,6 +34,7 @@ dependencies {
     // Testing libraries (optional, for testing your API)
     testImplementation("io.ktor:ktor-server-test-host:2.3.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
+    implementation("io.ktor:ktor-client-core:2.3.0")
 }
 
 tasks.test {
