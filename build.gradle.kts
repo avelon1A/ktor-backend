@@ -35,6 +35,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-test-host:2.3.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
     implementation("io.ktor:ktor-client-core:2.3.0")
+    implementation("io.ktor:ktor-server-cors:2.3.0")  // CORS module for Ktor
+
 }
 
 tasks.test {
