@@ -69,34 +69,3 @@ jobs:
           docker tag testcoverage:latest ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
 
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build  # Ensure build job is successful before deployment
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Pull Docker image from Docker Hub
-        run: |
-          echo "Pulling Docker image from Docker Hub..."
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
-
-      - name: Run Docker container (deployment)
-        run: |
-          echo "Running Docker container for Ktor app..."
-          docker run -d -p 8080:8080 --name testcoverage-container ${{ secrets.DOCKER_HUB_USERNAME }}/testcoverage:latest
-
-      - name: Copy files from Docker container
-        run: |
-          echo "Copying files from Docker container..."
-          docker cp testcoverage-container:/path/to/file/on/container /path/to/local/destination
-          
-          # For example, copying logs or other generated files
-          # docker cp testcoverage-container:/app/logs/my-log.log ./my-log.log
-
-      - name: Stop and remove Docker container
-        run: |
-          echo "Stopping and removing Docker container..."
-          docker stop testcoverage-container
-          docker rm testcoverage-container
