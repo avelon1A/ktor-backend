@@ -1,3 +1,4 @@
+import data.CodingQuestion
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -9,12 +10,14 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.flow.toList
 import kotlinx.serialization.json.Json
 import model.data.DataList
 import model.data.Problem
 import model.data.ProblemDetails
 import model.data.StatusResponse
 import service.MainService
+import uitl.MongoDb
 
 fun main() {
     embeddedServer(Netty, port = 8080, module = Application::module).start(wait = true)
@@ -83,16 +86,15 @@ fun Route.coverageRouting(mainService: MainService) {
     get("/problem/{id}") {
         val problemId = call.parameters["id"]?.toIntOrNull()
         val category = call.parameters["category"]
-        var allProblems : ProblemDetails?
+        var allProblems: ProblemDetails?
         if (problemId == null) {
             call.respond(HttpStatusCode.BadRequest, "Invalid problem id")
             return@get
         }
-        if(category == "array"){
+        if (category == "array") {
             allProblems = mainService.getProblem(problemId)
-        }
-        else{
-            allProblems =   null
+        } else {
+            allProblems = null
         }
 
         if (allProblems != null) {
@@ -103,8 +105,21 @@ fun Route.coverageRouting(mainService: MainService) {
     }
 
 
+        get("/coding") {
+            MongoDb.testDatabase()
+            val questions = MongoDb.codingQuestions.find().toList()
+            call.respond(questions)
+        }
+        post {
+            val codingQuestion = call.receive<CodingQuestion>()
+            MongoDb.codingQuestions.insertOne(codingQuestion)
+            call.respond(HttpStatusCode.Created, codingQuestion)
+        }
+    }
 
-}
+
+
+
 
 
 

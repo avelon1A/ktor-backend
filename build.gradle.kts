@@ -36,6 +36,8 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
     implementation("io.ktor:ktor-client-core:2.3.0")
     implementation("io.ktor:ktor-server-cors:2.3.0")  // CORS module for Ktor
+    implementation("org.mongodb:mongodb-driver-kotlin-coroutine:4.10.1")
+
 
 }
 
@@ -47,7 +49,7 @@ application {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 }
 tasks.jar {
     archiveBaseName.set("testcoverage")
